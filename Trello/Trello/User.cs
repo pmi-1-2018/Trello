@@ -22,7 +22,7 @@ namespace Trello
             id = 0;
         }
 
-        public User(String firstName, String lastName, String email, String password, int id)
+        public User(String firstName, String lastName, String email, String password, int id=0)
         {
             this.firstName = firstName;
             this.lastName = lastName;
@@ -120,6 +120,84 @@ namespace Trello
                 reader.Close();
                 return user;
             }           
+        }
+
+        public Boolean Register()
+        {
+            SQLiteConnection sql_con = Program.CreateConnection();
+            string f_name, l_name, mail, pass, pass2;
+            Console.Write("CREATING NEW USER\nyour email: ");
+            mail = Console.ReadLine();
+            // to check if user already exist
+            SQLiteDataReader reader;
+            SQLiteCommand cmd;
+            cmd = sql_con.CreateCommand();
+            cmd.CommandText = "SELECT * FROM users WHERE email='" + mail + "';";
+            reader = cmd.ExecuteReader();
+            if (reader.HasRows)
+            {
+                Console.WriteLine("there is already user with such email\n type 'yes' to register new user or any other key to login");
+                string resp = Console.ReadLine();
+                if (resp=="yes")
+                {
+                    return false;
+                }
+                else
+                {
+                    return true;
+                }
+            }
+
+
+
+            Console.Write("your first name: ");
+            f_name = Console.ReadLine();
+            Console.Write("your last name: ");
+            l_name = Console.ReadLine();
+            Console.WriteLine("your password:");
+            pass = null;
+            pass2 = null;
+            while (true)
+            {
+                var key = System.Console.ReadKey(true);
+                if (key.Key == ConsoleKey.Enter)
+                    break;
+                pass += key.KeyChar;
+            }
+            Console.WriteLine("type your password again:");
+            while (true)
+            {
+                var key = System.Console.ReadKey(true);
+                if (key.Key == ConsoleKey.Enter)
+                    break;
+                pass2 += key.KeyChar;
+            }
+            if (pass==pass2)
+            {
+                User user = new User(f_name, l_name, mail, pass);
+                SQLiteCommand insertSQL = new SQLiteCommand("INSERT INTO users (firstName, lastName, email, password) VALUES (@firstName, @lastName, @email, @password)", sql_con);
+                insertSQL.Parameters.Add("firstName", System.Data.DbType.String).Value = user.firstName;
+                insertSQL.Parameters.Add("lastName", System.Data.DbType.String).Value = user.lastName;
+                insertSQL.Parameters.Add("email", System.Data.DbType.String).Value = user.email;
+                insertSQL.Parameters.Add("password", System.Data.DbType.String).Value = user.password;
+                try
+                {
+                    insertSQL.ExecuteNonQuery();
+                    Console.WriteLine("user added");
+                    return true;
+                }
+                catch (Exception ex)
+                {
+                    throw new Exception(ex.Message);
+                }
+            }
+            //if passes are not same
+            else
+            {
+                Console.WriteLine("passwords do not match. try again.");
+                return false;
+            }
+            
         }
     }
 }

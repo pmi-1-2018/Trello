@@ -16,10 +16,20 @@ namespace Trello
             SQLiteConnection sqliteConn;
             sqliteConn = CreateConnection();
             User currentUser = new User();
+            while (true)
+            {
+                bool registered = currentUser.Register();
+                if (registered)
+                {
+                    break;
+                }
+
+            }
             while (currentUser.Id==0)
             {
                 currentUser = currentUser.Login();
             }
+
 
             Console.WriteLine(currentUser.ToString());
             Console.ReadLine();
