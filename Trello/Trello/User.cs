@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 using System.Data.SQLite;
+using System.Text.RegularExpressions;
 
 namespace Trello
 {
@@ -66,6 +67,23 @@ namespace Trello
             return firstName + " " + lastName; 
         }
 
+        bool IsValidEmail(string email)
+        {
+            try
+            {
+                var addr = new System.Net.Mail.MailAddress(email);
+                return addr.Address == email;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
+        public static bool IsPasswordStrong(string password)
+        {
+            return Regex.IsMatch(password, @"^(?=.{8,})(?=.*[a-z])(?=.*[A-Z])(?!.*\s).*$");
+        }
         public User Login()
         {
             Console.WriteLine("LOGGING INTO APP\ntype your email:");
@@ -128,6 +146,11 @@ namespace Trello
             string f_name, l_name, mail, pass, pass2;
             Console.Write("CREATING NEW USER\nyour email: ");
             mail = Console.ReadLine();
+            while (!IsValidEmail(mail))
+            {
+                Console.WriteLine("try again. your email is not valid\nyour email: ");
+                mail = Console.ReadLine();
+            }
             // to check if user already exist
             SQLiteDataReader reader;
             SQLiteCommand cmd;
@@ -148,8 +171,6 @@ namespace Trello
                 }
             }
 
-
-
             Console.Write("your first name: ");
             f_name = Console.ReadLine();
             Console.Write("your last name: ");
@@ -157,13 +178,24 @@ namespace Trello
             Console.WriteLine("your password:");
             pass = null;
             pass2 = null;
-            while (true)
+            bool flag = false;
+            do
             {
-                var key = System.Console.ReadKey(true);
-                if (key.Key == ConsoleKey.Enter)
-                    break;
-                pass += key.KeyChar;
+                while (true)
+                {
+                    var key = System.Console.ReadKey(true);
+                    if (key.Key == ConsoleKey.Enter)
+                        break;
+                    pass += key.KeyChar;
+                }
+                if (flag)
+                {
+                    Console.WriteLine("your password is not strong enough. it must be 8 characters and have both letters and numbers \ntry again");
+                }
+                flag = true;
             }
+            while (!IsPasswordStrong(pass));
+
             Console.WriteLine("type your password again:");
             while (true)
             {

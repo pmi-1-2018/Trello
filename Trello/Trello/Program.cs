@@ -13,25 +13,52 @@ namespace Trello
     {
         static void Main(string[] args)
         {
+            Console.WriteLine("### TRELLO ###");
             SQLiteConnection sqliteConn;
             sqliteConn = CreateConnection();
             User currentUser = new User();
-            while (true)
+
+            bool knownKeyPressed = false;
+            do
             {
-                bool registered = currentUser.Register();
-                if (registered)
+                Console.WriteLine("Press 1 to sign up; Press 2 to login;");
+                ConsoleKeyInfo keyReaded = Console.ReadKey();
+                Console.WriteLine();
+                switch (keyReaded.Key)
                 {
-                    break;
+                    case ConsoleKey.D1: //Number 1 Key
+                        while (true)
+                        {
+                            bool registered = currentUser.Register();
+                            if (registered)
+                            {
+                                break;
+                            }
+                        }
+                        while (currentUser.Id == 0)
+                        {
+                            currentUser = currentUser.Login();
+                        }
+                        knownKeyPressed = true;
+                        break;
+
+                    case ConsoleKey.D2: //Number 2 Key
+                        while (currentUser.Id == 0)
+                        {
+                            currentUser = currentUser.Login();
+                        }
+                        knownKeyPressed = true;
+                        break;
+
+                    default: //Not known key pressed
+                        Console.WriteLine("Wrong key, please try again.");
+                        knownKeyPressed = false;
+                        break;
                 }
-
-            }
-            while (currentUser.Id==0)
-            {
-                currentUser = currentUser.Login();
-            }
-
+            } while (!knownKeyPressed);
 
             Console.WriteLine(currentUser.ToString());
+            Console.WriteLine("Bye, bye");
             Console.ReadLine();
         }
 
@@ -52,21 +79,5 @@ namespace Trello
             }
             return sqlite_conn;
         }
-
-        //public static void ReadData(SQLiteConnection conn)
-        //{
-        //    SQLiteDataReader sqlite_datareader;
-        //    SQLiteCommand sqlite_cmd;
-        //    sqlite_cmd = conn.CreateCommand();
-        //    sqlite_cmd.CommandText = "SELECT * from users";
-
-        //    sqlite_datareader = sqlite_cmd.ExecuteReader();
-        //    while (sqlite_datareader.Read())
-        //    {
-        //        string myreader = sqlite_datareader.GetString(0);
-        //        Console.WriteLine(myreader);
-        //    }
-        //    conn.Close();
-        //}
     }
 }
