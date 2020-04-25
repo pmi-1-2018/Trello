@@ -45,6 +45,35 @@ namespace Trello
         }
         public void AddColumn()
         {
+<<<<<<< HEAD
+            Console.WriteLine("Enter new column name:");
+            string column_name = Console.ReadLine();
+            SQLiteCommand cmd = conn.CreateCommand();
+            cmd.CommandText = $"INSERT INTO columns (name, board) VALUES ('{column_name}', {id});";
+            cmd.ExecuteNonQuery();
+            Console.WriteLine($"Column {column_name} is created");
+        }
+        public void DeleteColumn()
+        {
+            Console.WriteLine("Enter column id to delete:");
+            long column_id = long.Parse(Console.ReadLine());
+            SQLiteCommand cmd = conn.CreateCommand();
+            cmd.CommandText = $"DELETE FROM columns WHERE id={column_id};";
+            cmd.ExecuteNonQuery();
+            Console.WriteLine($"Column is deleted");
+        }
+        public void ShowColumns()
+        {
+            Console.WriteLine("Board: " + name);
+            SQLiteCommand cmd = conn.CreateCommand();
+            cmd.CommandText = $"SELECT id,name FROM columns WHERE board={id};";
+            SQLiteDataReader reader = cmd.ExecuteReader();
+
+            while (reader.Read())
+            {
+                Console.WriteLine($"id:{reader[0]}, name:{reader[1]}");
+            }
+=======
             Console.WriteLine("Enter column name:");
             string name = Console.ReadLine();
             SQLiteCommand cmd = conn.CreateCommand();
@@ -60,6 +89,7 @@ namespace Trello
             Console.WriteLine(cmd.CommandText);
             cmd.ExecuteNonQuery();
             Console.WriteLine("Column is deleted");
+>>>>>>> 31b7827... added board selecting and chaning its name
         }
     }
 }
