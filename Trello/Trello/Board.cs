@@ -45,7 +45,6 @@ namespace Trello
         }
         public void AddColumn()
         {
-<<<<<<< HEAD
             Console.WriteLine("Enter new column name:");
             string column_name = Console.ReadLine();
             SQLiteCommand cmd = conn.CreateCommand();
@@ -73,14 +72,6 @@ namespace Trello
             {
                 Console.WriteLine($"id:{reader[0]}, name:{reader[1]}");
             }
-=======
-            Console.WriteLine("Enter column name:");
-            string name = Console.ReadLine();
-            SQLiteCommand cmd = conn.CreateCommand();
-            cmd.CommandText = $"INSERT INTO columns (name, board) VALUES ({name}, {id})";
-            Console.WriteLine(cmd.CommandText);
-            cmd.ExecuteNonQuery();
-            Console.WriteLine("Column is added to board");
         }
         public void DeleteColumn(string column_id)
         {
@@ -89,7 +80,6 @@ namespace Trello
             Console.WriteLine(cmd.CommandText);
             cmd.ExecuteNonQuery();
             Console.WriteLine("Column is deleted");
->>>>>>> 31b7827... added board selecting and chaning its name
         }
     }
 }

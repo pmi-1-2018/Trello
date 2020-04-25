@@ -93,7 +93,6 @@ namespace Trello
                     case ConsoleKey.D2:
                         currentUser.ShowBoards();
                         knownKeyPressed = true;
-<<<<<<< HEAD
                         break;
                     case ConsoleKey.D3:
                         SelectBoard(currentUser);
@@ -101,18 +100,7 @@ namespace Trello
                         break;
                     case ConsoleKey.Q:
                         knownKeyPressed = false;
-                        break;
-=======
-                        break;
-                    case ConsoleKey.D3:
-                        SelectBoard(currentUser);
-                        knownKeyPressed = true;
-                        break;
-                    case ConsoleKey.Q:
-                        knownKeyPressed = false;
-                        break;
->>>>>>> 31b7827... added board selecting and chaning its name
-                        
+                        break;               
                 }
 
             } while (!knownKeyPressed);
@@ -138,20 +126,11 @@ namespace Trello
         }
         public static void BoardEdit(Board board)
         {
-<<<<<<< HEAD
-            bool knownKeyPressed = true;
-            do
-            {
-                Console.WriteLine("BoardEdit\nPress 1 to change name, press 2 to add column, press 3 to delete column by id, press 4 to show Board data");
-                ConsoleKeyInfo consoleKey = Console.ReadKey();
-                Console.WriteLine();
-=======
             bool knownKeyPressed = false;
             do
             {
-                Console.WriteLine("BoardEdit\nPress 1 to change name, press 2 to add column, press 3 to delete column by id, press 4 to show all columns");
+                Console.WriteLine("Press 1 to change name, press 2 to add column, press 3 to delete column by id, press 4 to show all columns");
                 ConsoleKeyInfo consoleKey = Console.ReadKey();
->>>>>>> 31b7827... added board selecting and chaning its name
                 switch (consoleKey.Key)
                 {
                     case ConsoleKey.D1:
@@ -162,7 +141,6 @@ namespace Trello
                         board.AddColumn();
                         knownKeyPressed = true;
                         break;
-<<<<<<< HEAD
                     case ConsoleKey.D3:
                         board.DeleteColumn();
                         knownKeyPressed = true;
@@ -171,18 +149,12 @@ namespace Trello
                         board.ShowColumns();
                         knownKeyPressed = true;
                         break;
-=======
->>>>>>> 31b7827... added board selecting and chaning its name
                     default:
                         knownKeyPressed = false;
                         break;
                 }
             }
-<<<<<<< HEAD
             while (knownKeyPressed);
-=======
-            while (!knownKeyPressed);
->>>>>>> 31b7827... added board selecting and chaning its name
         }
         public static SQLiteConnection CreateConnection()
         {
