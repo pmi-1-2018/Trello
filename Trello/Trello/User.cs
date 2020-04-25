@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Data;
 using System.Data.SQLite;
 using System.Text.RegularExpressions;
 
@@ -138,6 +139,39 @@ namespace Trello
                 reader.Close();
                 return user;
             }           
+        }
+        public Boolean CreateBoard()
+        {
+            SQLiteConnection sql_con = Program.CreateConnection();
+            string name;
+            Console.WriteLine("Enter name of board:");
+            name = Console.ReadLine();
+            SQLiteCommand insertSQL = new SQLiteCommand("INSERT INTO boards (name, user) VALUES (@name, @user)", sql_con);
+            insertSQL.Parameters.Add("name", System.Data.DbType.String).Value = name;
+            insertSQL.Parameters.Add("user", System.Data.DbType.String).Value = this.id;
+            try
+            {
+                insertSQL.ExecuteNonQuery();
+                Console.WriteLine("board is created");
+                return true;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+        }
+
+        public void ShowBoards()
+        {
+            SQLiteConnection sql_con = Program.CreateConnection();
+            SQLiteCommand cmd = sql_con.CreateCommand();
+            cmd.CommandText = $"SELECT * FROM boards where user={this.id};";
+            SQLiteDataReader reader = cmd.ExecuteReader();
+            while (reader.Read())
+            {
+                IDataRecord record = (IDataReader)reader;
+                Console.WriteLine(String.Format("{0}, {1}", record[0], record[1]));
+            }
         }
 
         public Boolean Register()

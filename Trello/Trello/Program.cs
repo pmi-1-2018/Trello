@@ -57,16 +57,55 @@ namespace Trello
                 }
             } while (!knownKeyPressed);
 
+            while (true)
+            {
+                BoardMenu(currentUser);
+
+            }
+            
+
+            
             Console.WriteLine(currentUser.ToString());
             Console.WriteLine("Bye, bye");
             Console.ReadLine();
         }
 
+        public static void BoardMenu(User currentUser)
+        {
+            bool knownKeyPressed = false;
+            do
+            {
+                Console.WriteLine("Press 1 to create board, Press 2 to see your boards");
+                ConsoleKeyInfo keyReaded = Console.ReadKey();
+                
+                switch (keyReaded.Key)
+                {
+
+                    case ConsoleKey.D1:
+                        while (true)
+                        {
+                            bool created = currentUser.CreateBoard();
+                            if (created)
+                            {
+                                break;
+                            }
+                        }
+                        knownKeyPressed = true;
+                        break;
+                    case ConsoleKey.D2:
+                        currentUser.ShowBoards();
+                        break;
+                }
+
+            } while (!knownKeyPressed);
+        }
+
+
         public static SQLiteConnection CreateConnection()
         {
             SQLiteConnection sqlite_conn;
             // Create a new database connection:
-            string path = Path.Combine(Environment.CurrentDirectory, @"..\..\..\", "trello.db");
+            string path = Path.Combine(Environment.CurrentDirectory, @"../../../", "trello.db");
             string connetionString = "Data Source=" + path + ";";
             sqlite_conn = new SQLiteConnection(connetionString);
             try
