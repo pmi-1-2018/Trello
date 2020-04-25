@@ -14,6 +14,7 @@ namespace Trello
         String email;
         String password;
         int id;
+        int currentBoardId;
 
         public User()
         {
@@ -43,6 +44,11 @@ namespace Trello
         {
             get { return lastName; }
             set { lastName = value; }
+        }
+        public int CurrentBoardId
+        {
+            get { return currentBoardId; }
+            set { currentBoardId = value; }
         }
 
         public string Email
@@ -172,6 +178,25 @@ namespace Trello
                 IDataRecord record = (IDataReader)reader;
                 Console.WriteLine(String.Format("{0}, {1}", record[0], record[1]));
             }
+        }
+        public void BoardManipulate()
+        {
+            SQLiteConnection sql_con = Program.CreateConnection();
+            SQLiteCommand cmd = sql_con.CreateCommand();
+            Console.WriteLine("Enter your actuon: 1) Change board name; 2) Create new columnd 3) Select column");
+            ConsoleKeyInfo key = Console.ReadKey();
+            bool keyKnown = false;
+            do
+            {
+                switch (key.Key)
+                {
+                    case ConsoleKey.D1:
+
+                        break;
+                }
+            }
+            while (keyKnown);
+
         }
 
         public Boolean Register()

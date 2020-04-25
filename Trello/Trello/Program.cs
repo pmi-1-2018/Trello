@@ -62,9 +62,6 @@ namespace Trello
                 BoardMenu(currentUser);
 
             }
-            
-
-            
             Console.WriteLine(currentUser.ToString());
             Console.WriteLine("Bye, bye");
             Console.ReadLine();
@@ -75,8 +72,9 @@ namespace Trello
             bool knownKeyPressed = false;
             do
             {
-                Console.WriteLine("Press 1 to create board, Press 2 to see your boards");
+                Console.WriteLine("Press 1 to create board, Press 2 to see your boards, Press 3 to select board");
                 ConsoleKeyInfo keyReaded = Console.ReadKey();
+                Console.WriteLine();
                 
                 switch (keyReaded.Key)
                 {
@@ -94,13 +92,63 @@ namespace Trello
                         break;
                     case ConsoleKey.D2:
                         currentUser.ShowBoards();
+                        knownKeyPressed = true;
                         break;
+                    case ConsoleKey.D3:
+                        SelectBoard(currentUser);
+                        knownKeyPressed = true;
+                        break;
+                    case ConsoleKey.Q:
+                        knownKeyPressed = false;
+                        break;
+                        
                 }
 
             } while (!knownKeyPressed);
         }
+        public static void SelectBoard(User current_user)
+        {
 
-
+                Console.WriteLine("Press id of board to select show board details");
+                try
+                {
+                    int id_readed = Int32.Parse(Console.ReadLine());
+                    Board board = new Board(id_readed, current_user.Id);
+                    BoardEdit(board);
+                    
+                }
+                catch(Exception e)
+                {
+                    Console.WriteLine("Enter correct id");
+                    Console.WriteLine(e);
+                    SelectBoard(current_user);
+                }
+            
+        }
+        public static void BoardEdit(Board board)
+        {
+            bool knownKeyPressed = false;
+            do
+            {
+                Console.WriteLine("BoardEdit\nPress 1 to change name, press 2 to add column, press 3 to delete column by id, press 4 to show all columns");
+                ConsoleKeyInfo consoleKey = Console.ReadKey();
+                switch (consoleKey.Key)
+                {
+                    case ConsoleKey.D1:
+                        board.ChangeName();
+                        knownKeyPressed = true;
+                        break;
+                    case ConsoleKey.D2:
+                        board.AddColumn();
+                        knownKeyPressed = true;
+                        break;
+                    default:
+                        knownKeyPressed = false;
+                        break;
+                }
+            }
+            while (!knownKeyPressed);
+        }
         public static SQLiteConnection CreateConnection()
         {
             SQLiteConnection sqlite_conn;
