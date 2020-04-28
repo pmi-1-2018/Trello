@@ -37,6 +37,7 @@ namespace Trello
                         }
                         while (currentUser.Id == 0)
                         {
+
                             currentUser = currentUser.Login();
                         }
                         knownKeyPressed = true;
@@ -45,12 +46,14 @@ namespace Trello
                     case ConsoleKey.D2: //Number 2 Key
                         while (currentUser.Id == 0)
                         {
-                            currentUser = currentUser.Login();
+                            currentUser = currentUser.AutoLogin();
+                            //currentUser = currentUser.Login();
                         }
                         knownKeyPressed = true;
                         break;
 
                     default: //Not known key pressed
+                        Console.Clear();
                         Console.WriteLine("Wrong key, please try again.");
                         knownKeyPressed = false;
                         break;
@@ -69,9 +72,11 @@ namespace Trello
 
         public static void BoardMenu(User currentUser)
         {
+//            Console.Clear();
             bool knownKeyPressed = false;
             do
             {
+                Console.WriteLine($"Logged in as {currentUser.Email}");
                 Console.WriteLine("Press 1 to create board, Press 2 to see your boards, Press 3 to select board");
                 ConsoleKeyInfo keyReaded = Console.ReadKey();
                 Console.WriteLine();
@@ -107,30 +112,32 @@ namespace Trello
         }
         public static void SelectBoard(User current_user)
         {
+            try
+            {
+                //permission check needed
+                Console.WriteLine("Press id of board to select");
+                int id_readed = Int32.Parse(Console.ReadLine());
+                Board board = new Board(id_readed, current_user.Id);
+                Console.WriteLine($"board '{board.GetName()}' selected");
+                BoardEdit(board);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("Enter correct id");
+                Console.WriteLine(e);
+                SelectBoard(current_user);
+            }
 
-                Console.WriteLine("Press id of board to select show board details");
-                try
-                {
-                    int id_readed = Int32.Parse(Console.ReadLine());
-                    Board board = new Board(id_readed, current_user.Id);
-                    BoardEdit(board);
-                    
-                }
-                catch(Exception e)
-                {
-                    Console.WriteLine("Enter correct id");
-                    Console.WriteLine(e);
-                    SelectBoard(current_user);
-                }
-            
         }
         public static void BoardEdit(Board board)
         {
             bool knownKeyPressed = false;
             do
             {
-                Console.WriteLine("Press 1 to change name, press 2 to add column, press 3 to delete column by id, press 4 to show all columns");
+                Console.WriteLine($"\nBoard: {board.GetName()}");
+                Console.WriteLine("Press 1 to change name, press 2 to add column, press 3 to delete column by id, press 4 to show all columns, press 5 to select column");
                 ConsoleKeyInfo consoleKey = Console.ReadKey();
+                Console.WriteLine();
                 switch (consoleKey.Key)
                 {
                     case ConsoleKey.D1:
@@ -147,6 +154,10 @@ namespace Trello
                         break;
                     case ConsoleKey.D4:
                         board.ShowColumns();
+                        knownKeyPressed = true;
+                        break;
+                    case ConsoleKey.D5:
+                        board.SelectColumn();
                         knownKeyPressed = true;
                         break;
                     default:

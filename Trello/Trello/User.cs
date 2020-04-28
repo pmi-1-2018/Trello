@@ -91,6 +91,58 @@ namespace Trello
         {
             return Regex.IsMatch(password, @"^(?=.{8,})(?=.*[a-z])(?=.*[A-Z])(?!.*\s).*$");
         }
+
+        public User AutoLogin()
+        {
+            Console.WriteLine("LOGGING INTO APP\n");
+            User user = new User();
+            string login = "volod2@com";
+            SQLiteConnection sqliteConn;
+            sqliteConn = Program.CreateConnection();
+
+            SQLiteDataReader reader;
+            SQLiteCommand cmd;
+            cmd = sqliteConn.CreateCommand();
+            cmd.CommandText = "SELECT * FROM users WHERE email='" + login + "';";
+            reader = cmd.ExecuteReader();
+            if (reader.HasRows)
+            {
+                while (reader.Read())
+                {
+                    string f_name = reader.GetString(0);
+                    string l_name = reader.GetString(1);
+                    string mail = reader.GetString(2);
+                    string p_word = reader.GetString(3);
+                    int pk = reader.GetInt32(4);
+                    string pass = "12V0v@34";
+                    
+                    if ((pass == p_word) && (pass != null))
+                    {
+                        user = new User(f_name, l_name, mail, p_word, pk);
+                        reader.Close();
+                        Console.WriteLine($"you logged in as {user.email}");
+                        return user;
+                    }
+                    else
+                    {
+                        Console.WriteLine("you entered wrong password.\n");
+                        reader.Close();
+                        return user;
+                    }
+                }
+                reader.Close();
+                return user;
+            }
+            else
+            {
+                Console.WriteLine("No such user found.\n");
+                reader.Close();
+                return user;
+            }
+
+
+        }
+
         public User Login()
         {
             Console.WriteLine("LOGGING INTO APP\ntype your email:");
@@ -176,27 +228,8 @@ namespace Trello
             while (reader.Read())
             {
                 IDataRecord record = (IDataReader)reader;
-                Console.WriteLine(String.Format("{0}, {1}", record[0], record[1]));
+                Console.WriteLine(String.Format("id:{0} -> {1}", record[0], record[1]));
             }
-        }
-        public void BoardManipulate()
-        {
-            SQLiteConnection sql_con = Program.CreateConnection();
-            SQLiteCommand cmd = sql_con.CreateCommand();
-            Console.WriteLine("Enter your actuon: 1) Change board name; 2) Create new columnd 3) Select column");
-            ConsoleKeyInfo key = Console.ReadKey();
-            bool keyKnown = false;
-            do
-            {
-                switch (key.Key)
-                {
-                    case ConsoleKey.D1:
-
-                        break;
-                }
-            }
-            while (keyKnown);
-
         }
 
         public Boolean Register()
@@ -290,5 +323,6 @@ namespace Trello
             }
             
         }
+
     }
 }
