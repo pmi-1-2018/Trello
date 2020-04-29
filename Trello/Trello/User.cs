@@ -34,6 +34,29 @@ namespace Trello
             this.id = id;
         }
 
+        public User(int id)
+        {
+            SQLiteConnection conn;
+            conn = Program.CreateConnection();
+            SQLiteCommand cmd = conn.CreateCommand();
+            cmd.CommandText = $"SELECT firstName, lastName, email, password FROM users WHERE id={id}";
+            SQLiteDataReader reader = cmd.ExecuteReader();
+
+            if (reader.HasRows)
+            {
+                reader.Read();
+                this.firstName = (string)reader[0];
+                this.lastName = (string)reader[1];
+                this.email = (string)reader[2];
+                this.password = (string)reader[3];
+                this.id = id;
+            }
+            reader.Close();
+
+
+            
+        }
+
         public string FirstName   // property
         {
             get { return firstName; }   // get method

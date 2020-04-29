@@ -76,8 +76,10 @@ namespace Trello
             bool knownKeyPressed = false;
             do
             {
-                Console.WriteLine($"Logged in as {currentUser.Email}");
-                Console.WriteLine("Press 1 to create board, Press 2 to see your boards, Press 3 to select board");
+                Console.WriteLine($"Logged in as {currentUser.Email}\nYour boards:");
+                currentUser.ShowBoards();
+
+                Console.WriteLine("Press 1 to create board, Press 2 to select board");
                 ConsoleKeyInfo keyReaded = Console.ReadKey();
                 Console.WriteLine();
                 
@@ -96,10 +98,6 @@ namespace Trello
                         knownKeyPressed = true;
                         break;
                     case ConsoleKey.D2:
-                        currentUser.ShowBoards();
-                        knownKeyPressed = true;
-                        break;
-                    case ConsoleKey.D3:
                         SelectBoard(currentUser);
                         knownKeyPressed = true;
                         break;
@@ -135,9 +133,11 @@ namespace Trello
             do
             {
                 Console.WriteLine($"\nBoard: {board.GetName()}");
-                Console.WriteLine("Press 1 to change name, press 2 to add column, press 3 to delete column by id, press 4 to show all columns, press 5 to select column");
+                board.ShowColumns();
+                Console.WriteLine("Press 1 to change name of board, press 2 to add a column, press 3 to select column, press 4 to go back, press 5 to delete board");
                 ConsoleKeyInfo consoleKey = Console.ReadKey();
                 Console.WriteLine();
+//                press 3 to delete column by id
                 switch (consoleKey.Key)
                 {
                     case ConsoleKey.D1:
@@ -148,17 +148,22 @@ namespace Trello
                         board.AddColumn();
                         knownKeyPressed = true;
                         break;
+                    case ConsoleKey.D5:
+                        int user_id = board.GetUserId();
+                        board.Delete();
+                        knownKeyPressed = true;
+                        User user = new User(user_id);
+                        BoardMenu(user);
+                        break;
                     case ConsoleKey.D3:
-                        board.DeleteColumn();
+                        board.SelectColumn();
                         knownKeyPressed = true;
                         break;
                     case ConsoleKey.D4:
-                        board.ShowColumns();
+                        int user_id2 = board.GetUserId();
                         knownKeyPressed = true;
-                        break;
-                    case ConsoleKey.D5:
-                        board.SelectColumn();
-                        knownKeyPressed = true;
+                        User user2 = new User(user_id2);
+                        BoardMenu(user2);
                         break;
                     default:
                         knownKeyPressed = false;

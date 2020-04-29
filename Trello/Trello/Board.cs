@@ -1,6 +1,10 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Data;
 using System.Data.SQLite;
+using System.Linq;
+using System.Runtime.InteropServices.ComTypes;
+
 namespace Trello
 {
     public class Board
@@ -9,7 +13,6 @@ namespace Trello
         SQLiteConnection conn;
         private string name;
         private int user_id;
-//        private long currentColumn;
         
         public Board(int id, int user_id)
         {
@@ -18,6 +21,8 @@ namespace Trello
             conn = Program.CreateConnection();
             FetchDbData(id);
         }
+
+
 
         public void FetchDbData(int board_id)
         {
@@ -33,6 +38,12 @@ namespace Trello
             reader.Close();
 
         }
+
+        public int GetUserId()
+        {
+            return user_id;
+        }
+
         public void ChangeName()
         {
             Console.WriteLine("Enter new board name:");
@@ -43,6 +54,39 @@ namespace Trello
             cmd.ExecuteNonQuery();
             Console.WriteLine($"Board name is changed {board_name}");
             this.name = board_name;
+        }
+
+        public void Delete()
+        {
+            Console.Write("are you sure you want to delete this board?\ntype 'yes' or any other key to discard: ");
+            string key = Console.ReadLine();
+            key = key.Trim();
+            key = key.ToLower();
+            if (key == "yes")
+            {
+                List<int> columns_id = new List<int>();
+                SQLiteCommand cmd = conn.CreateCommand();
+                cmd.CommandText = $"SELECT id FROM columns WHERE board={id};";
+                SQLiteDataReader reader = cmd.ExecuteReader();
+                while (reader.Read())
+                {
+                    columns_id.Add((int)(long)reader[0]);
+                }
+                reader.Close();
+                Console.WriteLine(columns_id);
+                foreach (int elem in columns_id)
+                {
+                    cmd.CommandText = $"DELETE FROM cards where column_id={elem}";
+                    cmd.ExecuteNonQuery();
+                }
+
+                cmd.CommandText = $"DELETE FROM columns where board={id}";
+                cmd.ExecuteNonQuery();
+
+                cmd.CommandText = $"DELETE FROM boards WHERE id={id};";
+                cmd.ExecuteNonQuery();
+                Console.WriteLine($"Board {name} has been deleted!");
+            }
         }
 
         public string GetName()
@@ -58,26 +102,22 @@ namespace Trello
             cmd.ExecuteNonQuery();
             Console.WriteLine($"Column {column_name} is created");
         }
-        public void DeleteColumn()
-        {
-            Console.WriteLine("Enter column id to delete:");
-            int column_id = int.Parse(Console.ReadLine());
-            SQLiteCommand cmd = conn.CreateCommand();
-            cmd.CommandText = $"DELETE FROM columns WHERE id={column_id};";
-            cmd.ExecuteNonQuery();
-            Console.WriteLine($"Column is deleted");
-        }
+        
         public void ShowColumns()
         {
-            Console.WriteLine("Board: " + name);
             SQLiteCommand cmd = conn.CreateCommand();
             cmd.CommandText = $"SELECT id,name FROM columns WHERE board={id};";
             SQLiteDataReader reader = cmd.ExecuteReader();
-
+            Console.WriteLine("Columns: ");
+            bool isEmpty = true;
             while (reader.Read())
             {
+                isEmpty = false;
                 Console.WriteLine($"id:{reader[0]} -> {reader[1]}");
             }
+            if (isEmpty)
+                Console.WriteLine("This board does not have any columns yet!");
+            
             reader.Close();
         }
         
@@ -87,6 +127,7 @@ namespace Trello
             try
             {
                 //permission check needed
+                ShowColumns();
                 Console.WriteLine("Press id of column to select:");
                 int id_readed = Int32.Parse(Console.ReadLine());
                 SQLiteCommand cmd = conn.CreateCommand();
@@ -103,17 +144,18 @@ namespace Trello
             {
                 Console.WriteLine("Enter correct id");
                 Console.WriteLine(e);
-                this.SelectColumn();
+                SelectColumn();
             }
         }
 
-        public static void ColumnEdit(Column column)
+        public void ColumnEdit(Column column)
         {
             bool knownKeyPressed = false;
             do
             {
                 Console.WriteLine($"\nColumn: {column.GetName()}");
-                Console.WriteLine("Press 1 to change name, press 2 to add card, press 3 to delete card by id, press 4 to show all cards, press 5 to select card");
+                column.ShowCards();
+                Console.WriteLine("Press 1 to change name, press 2 to add card, press 3 to select card, press 4 to delete column");
                 ConsoleKeyInfo consoleKey = Console.ReadKey();
                 Console.WriteLine();
                 switch (consoleKey.Key)
@@ -127,17 +169,15 @@ namespace Trello
                         knownKeyPressed = true;
                         break;
                     case ConsoleKey.D3:
-                        column.DeleteCard();
+                        column.SelectCard();
                         knownKeyPressed = true;
                         break;
                     case ConsoleKey.D4:
-                        column.ShowCards();
+                        column.Delete();
                         knownKeyPressed = true;
+                        //to add checking if board has columns
+                        this.SelectColumn();
                         break;
-                    //case ConsoleKey.D5:
-                    //    board.SelectColumn();
-                    //    knownKeyPressed = true;
-                    //    break;
                     default:
                         knownKeyPressed = false;
                         break;
