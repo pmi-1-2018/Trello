@@ -11,45 +11,48 @@ namespace Trello
         private string name;
         private int id;
         private int boardId;
+        Board board;
         SQLiteConnection conn;
         //private int currentCardId;
 
-        public Column(int id, int boardId)
-        {
-            this.id = id;
-            this.boardId = boardId;
-            conn = Program.CreateConnection();
-            FetchDbData(id);
-        }
+        //public Column(int id, int boardId)
+        //{
+        //    this.id = id;
+        //    this.boardId = boardId;
+        //    conn = Program.CreateConnection();
+        //    board = new Board(boardId);
+        //    FetchDbData(id);
+        //}
 
-        public Column()
-        {
-            this.id = 0;
-            this.boardId = 0;
-            this.name = null;
-        }
+        //public Column()
+        //{
+        //    this.id = 0;
+        //    this.boardId = 0;
+        //    this.name = null;
+        //}
 
         public Column(int id, string name, int boardId)
         {
             this.id = id;
             this.name = name;
             this.boardId = boardId;
+            this.board = new Board(boardId);
             conn = Program.CreateConnection();
         }
 
-        public void FetchDbData(int column_id)
-        {
-            SQLiteCommand cmd = conn.CreateCommand();
-            cmd.CommandText = $"SELECT name FROM columns WHERE id={column_id} AND board={boardId}";
-            SQLiteDataReader reader = cmd.ExecuteReader();
+        //public void FetchDbData(int column_id)
+        //{
+        //    SQLiteCommand cmd = conn.CreateCommand();
+        //    cmd.CommandText = $"SELECT name FROM columns WHERE id={column_id} AND board={boardId}";
+        //    SQLiteDataReader reader = cmd.ExecuteReader();
 
-            if (reader.HasRows)
-            {
-                reader.Read();
-                this.name = (string)reader[0];
-            }
-            reader.Close();
-        }
+        //    if (reader.HasRows)
+        //    {
+        //        reader.Read();
+        //        this.name = (string)reader[0];
+        //    }
+        //    reader.Close();
+        //}
 
         public void ChangeName()
         {
@@ -71,7 +74,7 @@ namespace Trello
 
         public void AddCard()
         {
-            Console.WriteLine("Enter new card name:");
+            Console.WriteLine("\nEnter new card name:");
             string card_name = Console.ReadLine();
             Console.WriteLine("Enter card description:");
             string description = Console.ReadLine();
@@ -86,7 +89,6 @@ namespace Trello
             try
             {
                 //permission check needed
-                ShowCards();
                 Console.WriteLine("Type id of card to select:");
                 int id_readed = Int32.Parse(Console.ReadLine());
                 SQLiteCommand cmd = conn.CreateCommand();
@@ -112,9 +114,11 @@ namespace Trello
             bool knownKeyPressed = false;
             do
             {
+                Console.Clear();
+                Console.WriteLine($"Logged in as {board.GetUser().Email}\n");
+                Console.WriteLine($"Board: {board.GetName()}\n");
                 Console.WriteLine(card);
-
-                Console.WriteLine("Press 1 to change name, press 2 to edit description, press 3 to move card to another column, press 4 to delete card");
+                Console.WriteLine("\nPress 1 to change name, press 2 to edit description, press 3 to move card to another column, press 4 to go back, press 5 to delete card");
                 ConsoleKeyInfo consoleKey = Console.ReadKey();
                 Console.WriteLine();
                 switch (consoleKey.Key)
@@ -131,12 +135,17 @@ namespace Trello
                         card.Move(this.boardId);
                         //check if is empty
                         knownKeyPressed = true;
+                        board.ColumnEdit(this);
                         break;
                     case ConsoleKey.D4:
+                        knownKeyPressed = true;
+                        board.ColumnEdit(this);
+                        break;
+                    case ConsoleKey.D5:
                         card.Delete();
                         knownKeyPressed = true;
                         //to add checking if column has cards
-                        this.SelectCard();
+                        board.ColumnEdit(this);
                         break;
                     default:
                         knownKeyPressed = false;
@@ -149,7 +158,7 @@ namespace Trello
         public void Delete()
         {
             //add deleting cards
-            Console.Write("are you sure you want to delete this column?\ntype 'yes' or any other key to discard: ");
+            Console.Write("\nare you sure you want to delete this column?\ntype 'yes' or any other key to discard: ");
             string key = Console.ReadLine();
             key = key.Trim();
             key = key.ToLower();
@@ -167,7 +176,7 @@ namespace Trello
 
         public void DeleteCard()
         {
-            Console.WriteLine("Enter card id to delete:");
+            Console.WriteLine("\nEnter card id to delete:");
             long card_id = long.Parse(Console.ReadLine());
             SQLiteCommand cmd = conn.CreateCommand();
             cmd.CommandText = $"DELETE FROM cards WHERE card_id={card_id};";
@@ -177,14 +186,14 @@ namespace Trello
         public void ShowCards()
         {
             SQLiteCommand cmd = conn.CreateCommand();
-            cmd.CommandText = $"SELECT card_id, card_name, description FROM cards WHERE column_id={id};";
+            cmd.CommandText = $"SELECT card_id, card_name FROM cards WHERE column_id={id};";
             SQLiteDataReader reader = cmd.ExecuteReader();
             Console.WriteLine("Cards: ");
             bool isEmpty = true;
             while (reader.Read())
             {
                 isEmpty = false;
-                Console.WriteLine($"id:{reader[0]} -> name:{reader[1]}\n{reader[2]}");
+                Console.WriteLine($"id:{reader[0]} -> name: {reader[1]}");
             }
             if (isEmpty)
                 Console.WriteLine("There is no cards in this column!");

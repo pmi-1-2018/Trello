@@ -76,10 +76,11 @@ namespace Trello
             bool knownKeyPressed = false;
             do
             {
-                Console.WriteLine($"Logged in as {currentUser.Email}\nYour boards:");
+                Console.Clear();
+                Console.WriteLine($"Logged in as {currentUser.Email}\n\nYour boards:");
                 currentUser.ShowBoards();
 
-                Console.WriteLine("Press 1 to create board, Press 2 to select board");
+                Console.WriteLine("\nPress 1 to create board, Press 2 to select board");
                 ConsoleKeyInfo keyReaded = Console.ReadKey();
                 Console.WriteLine();
                 
@@ -115,9 +116,10 @@ namespace Trello
                 //permission check needed
                 Console.WriteLine("Press id of board to select");
                 int id_readed = Int32.Parse(Console.ReadLine());
-                Board board = new Board(id_readed, current_user.Id);
+                Board board = new Board(id_readed);
                 Console.WriteLine($"board '{board.GetName()}' selected");
-                BoardEdit(board);
+                Console.Clear();
+                BoardEdit(board, current_user);
             }
             catch (Exception e)
             {
@@ -127,14 +129,17 @@ namespace Trello
             }
 
         }
-        public static void BoardEdit(Board board)
+        public static void BoardEdit(Board board, User user)
         {
             bool knownKeyPressed = false;
             do
             {
-                Console.WriteLine($"\nBoard: {board.GetName()}");
+                Console.Clear();
+                Console.WriteLine($"Logged in as {user.Email}\n");
+
+                Console.WriteLine($"Board: {board.GetName()}\n");
                 board.ShowColumns();
-                Console.WriteLine("Press 1 to change name of board, press 2 to add a column, press 3 to select column, press 4 to go back, press 5 to delete board");
+                Console.WriteLine("\nPress 1 to change name of board, press 2 to add a column, press 3 to select column, press 4 to go back, press 5 to delete board");
                 ConsoleKeyInfo consoleKey = Console.ReadKey();
                 Console.WriteLine();
 //                press 3 to delete column by id
@@ -152,7 +157,6 @@ namespace Trello
                         int user_id = board.GetUserId();
                         board.Delete();
                         knownKeyPressed = true;
-                        User user = new User(user_id);
                         BoardMenu(user);
                         break;
                     case ConsoleKey.D3:

@@ -7,7 +7,7 @@ using System.Text.RegularExpressions;
 
 namespace Trello
 {
-    class User
+    public class User
     {
         String firstName;
         String lastName;
