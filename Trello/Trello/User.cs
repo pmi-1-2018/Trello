@@ -290,61 +290,62 @@ namespace Trello
             f_name = Console.ReadLine();
             Console.Write("your last name: ");
             l_name = Console.ReadLine();
-            Console.WriteLine("your password:");
-            pass = null;
-            pass2 = null;
-            bool flag = false;
-            do
+            bool flag2 = true;
+            while (flag2)
             {
+
+
+                Console.WriteLine("your password:");
+                pass = null;
+                pass2 = null;
+                bool flag = false;
+                do
+                {
+                    while (true)
+                    {
+                        var key = System.Console.ReadKey(true);
+                        if (key.Key == ConsoleKey.Enter)
+                            break;
+                        pass += key.KeyChar;
+                    }
+                    if (flag)
+                    {
+                        Console.WriteLine("your password is not strong enough. it must be 8 characters and have both letters and numbers \ntry again");
+                    }
+                    flag = true;
+                }
+                while (!IsPasswordStrong(pass));
+
+                Console.WriteLine("type your password again:");
                 while (true)
                 {
                     var key = System.Console.ReadKey(true);
                     if (key.Key == ConsoleKey.Enter)
                         break;
-                    pass += key.KeyChar;
+                    pass2 += key.KeyChar;
                 }
-                if (flag)
+                if (pass == pass2)
                 {
-                    Console.WriteLine("your password is not strong enough. it must be 8 characters and have both letters and numbers \ntry again");
+                    User user = new User(f_name, l_name, mail, pass);
+                    SQLiteCommand insertSQL = new SQLiteCommand("INSERT INTO users (firstName, lastName, email, password) VALUES (@firstName, @lastName, @email, @password)", sql_con);
+                    insertSQL.Parameters.Add("firstName", System.Data.DbType.String).Value = user.firstName;
+                    insertSQL.Parameters.Add("lastName", System.Data.DbType.String).Value = user.lastName;
+                    insertSQL.Parameters.Add("email", System.Data.DbType.String).Value = user.email;
+                    insertSQL.Parameters.Add("password", System.Data.DbType.String).Value = user.password;
+                    try
+                    {
+                        insertSQL.ExecuteNonQuery();
+                        Console.WriteLine("user added");
+                        return true;
+                    }
+                    catch (Exception ex)
+                    {
+                        throw new Exception(ex.Message);
+                    }
                 }
-                flag = true;
-            }
-            while (!IsPasswordStrong(pass));
-
-            Console.WriteLine("type your password again:");
-            while (true)
-            {
-                var key = System.Console.ReadKey(true);
-                if (key.Key == ConsoleKey.Enter)
-                    break;
-                pass2 += key.KeyChar;
-            }
-            if (pass==pass2)
-            {
-                User user = new User(f_name, l_name, mail, pass);
-                SQLiteCommand insertSQL = new SQLiteCommand("INSERT INTO users (firstName, lastName, email, password) VALUES (@firstName, @lastName, @email, @password)", sql_con);
-                insertSQL.Parameters.Add("firstName", System.Data.DbType.String).Value = user.firstName;
-                insertSQL.Parameters.Add("lastName", System.Data.DbType.String).Value = user.lastName;
-                insertSQL.Parameters.Add("email", System.Data.DbType.String).Value = user.email;
-                insertSQL.Parameters.Add("password", System.Data.DbType.String).Value = user.password;
-                try
-                {
-                    insertSQL.ExecuteNonQuery();
-                    Console.WriteLine("user added");
-                    return true;
-                }
-                catch (Exception ex)
-                {
-                    throw new Exception(ex.Message);
-                }
-            }
-            //if passes are not same
-            else
-            {
                 Console.WriteLine("passwords do not match. try again.");
-                return false;
             }
-            
+            return true;
         }
 
     }

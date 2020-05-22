@@ -13,24 +13,7 @@ namespace Trello
         private int boardId;
         Board board;
         SQLiteConnection conn;
-        //private int currentCardId;
-
-        //public Column(int id, int boardId)
-        //{
-        //    this.id = id;
-        //    this.boardId = boardId;
-        //    conn = Program.CreateConnection();
-        //    board = new Board(boardId);
-        //    FetchDbData(id);
-        //}
-
-        //public Column()
-        //{
-        //    this.id = 0;
-        //    this.boardId = 0;
-        //    this.name = null;
-        //}
-
+        
         public Column(int id, string name, int boardId)
         {
             this.id = id;
@@ -40,19 +23,6 @@ namespace Trello
             conn = Program.CreateConnection();
         }
 
-        //public void FetchDbData(int column_id)
-        //{
-        //    SQLiteCommand cmd = conn.CreateCommand();
-        //    cmd.CommandText = $"SELECT name FROM columns WHERE id={column_id} AND board={boardId}";
-        //    SQLiteDataReader reader = cmd.ExecuteReader();
-
-        //    if (reader.HasRows)
-        //    {
-        //        reader.Read();
-        //        this.name = (string)reader[0];
-        //    }
-        //    reader.Close();
-        //}
 
         public void ChangeName()
         {

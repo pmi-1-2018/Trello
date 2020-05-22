@@ -37,7 +37,6 @@ namespace Trello
                         }
                         while (currentUser.Id == 0)
                         {
-
                             currentUser = currentUser.Login();
                         }
                         knownKeyPressed = true;
@@ -65,14 +64,10 @@ namespace Trello
                 BoardMenu(currentUser);
 
             }
-            Console.WriteLine(currentUser.ToString());
-            Console.WriteLine("Bye, bye");
-            Console.ReadLine();
         }
 
         public static void BoardMenu(User currentUser)
         {
-//            Console.Clear();
             bool knownKeyPressed = false;
             do
             {
@@ -142,7 +137,6 @@ namespace Trello
                 Console.WriteLine("\nPress 1 to change name of board, press 2 to add a column, press 3 to select column, press 4 to go back, press 5 to delete board");
                 ConsoleKeyInfo consoleKey = Console.ReadKey();
                 Console.WriteLine();
-//                press 3 to delete column by id
                 switch (consoleKey.Key)
                 {
                     case ConsoleKey.D1:

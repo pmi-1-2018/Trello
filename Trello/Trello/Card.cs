@@ -64,15 +64,6 @@ namespace Trello
         public override string ToString()
         {
             string result = $"Card: {name}\nDESCRIPTION:\n{description}\n";
-            //result += "TASKS:\n";
-            //bool isEmpty = true;
-            //foreach (string task in tasks)
-            //{
-            //    isEmpty = false;
-            //    result += $"- {task}\n";
-            //}
-            //if (isEmpty)
-            //    result += "There are no tasks yet";
             return result;
         }
 
@@ -118,7 +109,6 @@ namespace Trello
             }
             reader.Close();
 
-            //readline column_id where to move
             Console.WriteLine("type id of column where you want to move this card");
             int new_id = Convert.ToInt32(Console.ReadLine());
 

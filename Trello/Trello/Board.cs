@@ -15,14 +15,6 @@ namespace Trello
         private int user_id;
         User user;
         
-        //public Board(int id, int user_id)
-        //{
-        //    this.user_id = user_id;
-        //    this.id = id;
-        //    user = new User(user_id);
-        //    conn = Program.CreateConnection();
-        //    FetchDbData(id);
-        //}
 
         public Board(int id)
         {
@@ -47,20 +39,6 @@ namespace Trello
 
         }
 
-        //public void FetchDbData(int board_id)
-        //{
-        //    SQLiteCommand cmd = conn.CreateCommand();
-        //    cmd.CommandText = $"SELECT name FROM boards WHERE id={board_id} AND user={user_id}";
-        //    SQLiteDataReader reader = cmd.ExecuteReader();
-
-        //    if(reader.HasRows)
-        //    {
-        //        reader.Read();
-        //        this.name = (string)reader[0];
-        //    }
-        //    reader.Close();
-
-        //}
 
         public int GetUserId()
         {
@@ -155,7 +133,6 @@ namespace Trello
             try
             {
                 //permission check needed
-//                ShowColumns();
                 Console.WriteLine("Press id of column to select:");
                 int id_readed = Int32.Parse(Console.ReadLine());
                 SQLiteCommand cmd = conn.CreateCommand();
@@ -164,7 +141,6 @@ namespace Trello
                 reader.Read();
                 
                 Column column = new Column((int)(long)reader[0], (string)reader[1], (int)(long)reader[2]);
-//                Console.WriteLine($"Column '{column.GetName()}' selected");
                 reader.Close();
                 Console.Clear();
                 ColumnEdit(column);
